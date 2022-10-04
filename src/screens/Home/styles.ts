@@ -56,3 +56,21 @@ export const Item = styled.div<{ bgColor: string }>`
     height: 2rem;
   }
 `
+
+export const CoffeesContainer = styled.div`
+  padding: 1rem 0;
+
+  h2 {
+    margin-bottom: 2rem;
+    color: ${(props) => props.theme.colors['base-subtitle']};
+    font-family: 'Baloo 2', sans-serif;
+    font-size: ${(props) => props.theme.fontSizes[32]};
+    font-weight: 800;
+  }
+
+  .coffees-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 2rem;
+  }
+`

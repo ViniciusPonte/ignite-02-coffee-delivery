@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
 export const HeaderContainer = styled.header`
@@ -10,6 +11,10 @@ export const HeaderContainer = styled.header`
     display: flex;
     align-items: center;
     gap: 12px;
+  }
+
+  img {
+    cursor: pointer;
   }
 `
 
@@ -32,7 +37,7 @@ export const Location = styled.div`
   }
 `
 
-export const Cart = styled.button`
+export const StyledButton = styled(NavLink)`
   border: 0;
   outline: 0;
   padding: 0.5rem;
@@ -46,6 +51,10 @@ export const Cart = styled.button`
 
   svg {
     color: ${(props) => props.theme.colors['yellow-dark']};
+  }
+
+  &.active {
+    border: 1px solid ${(props) => props.theme.colors['yellow-dark']};
   }
 
   .items-on-card {

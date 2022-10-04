@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 
 export const LayoutContainer = styled.div`
-  height: calc(100vh - 10rem);
-  margin: auto 10rem;
+  height: 100vh;
+  padding: 0 10rem;
+  overflow: auto;
 `
