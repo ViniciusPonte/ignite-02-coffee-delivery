@@ -1,7 +1,8 @@
 import { Trash } from 'phosphor-react'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { ICoffee } from '../../../../../../@types/coffee'
 import { QuantityHandler } from '../../../../../../components/QuantityHandler'
+import { OrderContext } from '../../../../../../contexts/OrderContext'
 import { defaultTheme } from '../../../../../../styles/themes/default'
 import {
   ButtonRemove,
@@ -20,20 +21,7 @@ export function CoffeeItem({ coffee }: CoffeeItemProps) {
     total &&
     total.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })
 
-  const [quantity, setQuantity] = useState(0)
-
-  function handleChangeQuantity(type: 'add' | 'remove') {
-    switch (type) {
-      case 'add':
-        if (quantity >= 30) return
-        setQuantity((state) => state + 1)
-        break
-      case 'remove':
-        if (quantity === 0) return
-        setQuantity((state) => state - 1)
-        break
-    }
-  }
+  const { handleChangeQuantity, removeItemFromCart } = useContext(OrderContext)
 
   return (
     <CoffeeContainer>
@@ -45,12 +33,20 @@ export function CoffeeItem({ coffee }: CoffeeItemProps) {
           <span>{coffee.name}</span>
           <div style={{ gap: '0.5rem', display: 'flex', alignItems: 'center' }}>
             <QuantityHandler
-              quantity={quantity}
-              onChange={(e) => setQuantity(e.target.valueAsNumber)}
-              handleAdd={() => handleChangeQuantity('add')}
-              handleSubtract={() => handleChangeQuantity('remove')}
+              quantity={coffee.quantity || 0}
+              onChange={(e) =>
+                handleChangeQuantity(
+                  'custom',
+                  coffee.id,
+                  e.target.valueAsNumber,
+                )
+              }
+              handleAdd={() => handleChangeQuantity('add', coffee.id, 1)}
+              handleSubtract={() =>
+                handleChangeQuantity('remove', coffee.id, 1)
+              }
             />
-            <ButtonRemove>
+            <ButtonRemove onClick={() => removeItemFromCart(coffee.id)}>
               <Trash size={16} color={defaultTheme.colors.purple} />
               <span>Remover</span>
             </ButtonRemove>

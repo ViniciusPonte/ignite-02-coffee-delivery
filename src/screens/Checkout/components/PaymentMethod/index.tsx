@@ -1,13 +1,12 @@
 import { Bank, CreditCard, CurrencyDollar, Money } from 'phosphor-react'
-import { useState } from 'react'
+import { useContext } from 'react'
 import { FormBase } from '../../../../components/FormBase'
+import { OrderContext } from '../../../../contexts/OrderContext'
 import { defaultTheme } from '../../../../styles/themes/default'
 import { FormContainer, PaymentMethodButton } from './styles'
 
-type Methods = 'creditCard' | 'debitCard' | 'money'
-
 export function PaymentMethod() {
-  const [method, setMethod] = useState<Methods | undefined>(undefined)
+  const { paymentMethod, handleChangePaymentMethod } = useContext(OrderContext)
 
   return (
     <FormBase
@@ -18,8 +17,8 @@ export function PaymentMethod() {
       <FormContainer>
         <PaymentMethodButton
           type="button"
-          selected={method === 'creditCard'}
-          onClick={() => setMethod('creditCard')}
+          selected={paymentMethod === 'Cartão de Crédito'}
+          onClick={() => handleChangePaymentMethod('Cartão de Crédito')}
         >
           <CreditCard size={22} color={defaultTheme.colors.purple} />
           <span>Cartão de crédito</span>
@@ -27,8 +26,8 @@ export function PaymentMethod() {
 
         <PaymentMethodButton
           type="button"
-          selected={method === 'debitCard'}
-          onClick={() => setMethod('debitCard')}
+          selected={paymentMethod === 'Cartão de Débito'}
+          onClick={() => handleChangePaymentMethod('Cartão de Débito')}
         >
           <Bank size={22} color={defaultTheme.colors.purple} />
           <span>Cartão de débito</span>
@@ -36,8 +35,8 @@ export function PaymentMethod() {
 
         <PaymentMethodButton
           type="button"
-          selected={method === 'money'}
-          onClick={() => setMethod('money')}
+          selected={paymentMethod === 'Dinheiro'}
+          onClick={() => handleChangePaymentMethod('Dinheiro')}
         >
           <Money size={22} color={defaultTheme.colors.purple} />
           <span>Dinheiro</span>

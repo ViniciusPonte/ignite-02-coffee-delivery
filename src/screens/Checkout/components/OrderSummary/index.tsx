@@ -1,6 +1,8 @@
+import { useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 import coffee1 from '../../../../assets/coffees/coffee-1.svg'
 import coffee7 from '../../../../assets/coffees/coffee-7.svg'
+import { OrderContext } from '../../../../contexts/OrderContext'
 import { CoffeeItem } from './components/CoffeeItem'
 import {
   ConfirmButton,
@@ -10,46 +12,56 @@ import {
 } from './styles'
 
 export function OrderSummary() {
-  const order = [
-    {
-      id: '1',
-      name: 'Expresso Tradicional',
-      image: coffee1,
-      price: 9.9,
-      quantity: 3,
-    },
-    {
-      id: '7',
-      name: 'Capuccino',
-      image: coffee7,
-      price: 11.9,
-      quantity: 2,
-    },
-  ]
+  const { orderState } = useContext(OrderContext)
+
+  const totalItems = orderState.reduce((sum, i) => {
+    if (i.quantity) {
+      return sum + i.price * i.quantity
+    } else {
+      return sum
+    }
+  }, 0)
+
+  const taxDelivery = 3.5
+
+  const total = totalItems + taxDelivery
 
   return (
     <OrderSummaryContainer>
-      {order.map((item) => (
+      {orderState.map((item) => (
         <CoffeeItem key={item.id} coffee={item} />
       ))}
       <PriceContainer>
         <PriceRow>
           <span>Total de itens</span>
-          <span>R$ 29,70</span>
+          <span>
+            {totalItems.toLocaleString('pt-br', {
+              style: 'currency',
+              currency: 'BRL',
+            })}
+          </span>
         </PriceRow>
         <PriceRow>
           <span>Entrega</span>
-          <span>R$ 3,50</span>
+          <span>
+            {taxDelivery.toLocaleString('pt-br', {
+              style: 'currency',
+              currency: 'BRL',
+            })}
+          </span>
         </PriceRow>
         <PriceRow bold>
           <span>Total</span>
-          <span>R$ 33,20</span>
+          <span>
+            {total.toLocaleString('pt-br', {
+              style: 'currency',
+              currency: 'BRL',
+            })}
+          </span>
         </PriceRow>
       </PriceContainer>
 
-      <ConfirmButton>
-        <NavLink to="/order-completed">Confirmar Pedido</NavLink>
-      </ConfirmButton>
+      <ConfirmButton type="submit">Confirmar Pedido</ConfirmButton>
     </OrderSummaryContainer>
   )
 }

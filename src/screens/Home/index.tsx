@@ -1,7 +1,9 @@
+import { useContext, useEffect } from 'react'
 import coffeeIntroImg from '../../assets/coffe-intro.svg'
 import { CoffeeCard } from '../../components/CoffeeCard'
-import { coffees } from './constants/coffees'
-import { items } from './constants/items'
+import { coffees } from '../../constants/coffees'
+import { items } from '../../constants/items'
+import { AddressContext } from '../../contexts/AddressContext'
 import {
   CoffeesContainer,
   IntroContainer,
@@ -11,6 +13,13 @@ import {
 } from './styles'
 
 export function Home() {
+  const { onSaveAddress } = useContext(AddressContext)
+
+  useEffect(() => {
+    const storagedAddress = localStorage.getItem('@coffee-delivery:address')
+    onSaveAddress(JSON.parse(storagedAddress!!))
+  }, [])
+
   return (
     <>
       <IntroContainer>

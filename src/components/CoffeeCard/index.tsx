@@ -1,6 +1,7 @@
 import { ShoppingCart } from 'phosphor-react'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { ICoffee } from '../../@types/coffee'
+import { OrderContext } from '../../contexts/OrderContext'
 import { QuantityHandler } from '../QuantityHandler'
 import {
   CoffeeContainer,
@@ -20,20 +21,9 @@ export function CoffeeCard({ coffee }: CoffeeCardProps) {
     minimumFractionDigits: 2,
   })
 
-  const [quantity, setQuantity] = useState(0)
+  const { handleChangeQuantity, orderState } = useContext(OrderContext)
 
-  function handleChangeQuantity(type: 'add' | 'remove') {
-    switch (type) {
-      case 'add':
-        if (quantity >= 30) return
-        setQuantity((state) => state + 1)
-        break
-      case 'remove':
-        if (quantity === 0) return
-        setQuantity((state) => state - 1)
-        break
-    }
-  }
+  const activeCoffee = orderState.find((item) => item.id === coffee.id)
 
   return (
     <CoffeeContainer>
@@ -57,13 +47,18 @@ export function CoffeeCard({ coffee }: CoffeeCardProps) {
 
         <div className="quantity">
           <QuantityHandler
-            handleAdd={() => handleChangeQuantity('add')}
-            handleSubtract={() => handleChangeQuantity('remove')}
-            quantity={quantity}
-            onChange={(e) => setQuantity(e.target.valueAsNumber)}
+            handleAdd={() => handleChangeQuantity('add', coffee.id, 1)}
+            handleSubtract={() => handleChangeQuantity('remove', coffee.id, 1)}
+            quantity={activeCoffee?.quantity || 0}
+            onChange={(e) =>
+              handleChangeQuantity('custom', coffee.id, e.target.valueAsNumber)
+            }
           />
 
-          <button type="button" onClick={() => handleChangeQuantity('add')}>
+          <button
+            type="button"
+            onClick={() => handleChangeQuantity('add', coffee.id, 1)}
+          >
             <ShoppingCart size={22} weight="fill" />
           </button>
         </div>

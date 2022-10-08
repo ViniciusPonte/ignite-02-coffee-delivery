@@ -1,6 +1,6 @@
 import { Coffee, Package, ShoppingCart, Timer } from 'phosphor-react'
 import { ReactNode } from 'react'
-import { defaultTheme } from '../../../styles/themes/default'
+import { defaultTheme } from '../styles/themes/default'
 
 interface IItem {
   id: string

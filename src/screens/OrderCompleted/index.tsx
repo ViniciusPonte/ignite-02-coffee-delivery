@@ -1,5 +1,8 @@
 import { CurrencyDollar, MapPin, Timer } from 'phosphor-react'
+import { useContext } from 'react'
 import deliveringImg from '../../assets/delivering.svg'
+import { AddressContext } from '../../contexts/AddressContext'
+import { OrderContext } from '../../contexts/OrderContext'
 import { defaultTheme } from '../../styles/themes/default'
 import {
   IconWrapper,
@@ -13,6 +16,9 @@ import {
 } from './styles'
 
 export function OrderCompleted() {
+  const { address } = useContext(AddressContext)
+  const { paymentMethod } = useContext(OrderContext)
+
   return (
     <OrderCompletedContainer>
       <Title>Uhu! Pedido confirmado</Title>
@@ -26,9 +32,10 @@ export function OrderCompleted() {
                 <MapPin size={16} />
               </IconWrapper>
               <span>
-                Entrega em <strong>Rua João Daniel Martinelli, 102</strong>
+                Entrega em{' '}
+                <strong>{`${address?.street}, ${address?.number}`}</strong>
                 <br />
-                Farrapos - Porto Alegre, RS
+                {`${address?.neighborhood} - ${address?.city}, ${address?.state}`}
               </span>
             </StatusItem>
 
@@ -50,7 +57,7 @@ export function OrderCompleted() {
               <span>
                 Pagamento na entrega
                 <br />
-                <strong>Cartão de crédito</strong>
+                <strong>{paymentMethod}</strong>
               </span>
             </StatusItem>
           </StatusWrapper>

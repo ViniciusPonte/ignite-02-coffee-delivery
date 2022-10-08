@@ -1,10 +1,23 @@
 import { ListDashes, MapPin, ShoppingCart } from 'phosphor-react'
+import { useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 import logo from '../../assets/logo.svg'
+import { AddressContext } from '../../contexts/AddressContext'
+import { OrderContext } from '../../contexts/OrderContext'
 import { HeaderContainer, Location, StyledButton } from './styles'
 
 export function Header() {
-  const itemsOnCard = [1, 2]
+  const { orderState } = useContext(OrderContext)
+  const { address } = useContext(AddressContext)
+
+  const totalItems = orderState.reduce((sum, i) => {
+    if (i.quantity) {
+      return sum + i.quantity
+    } else {
+      return sum
+    }
+  }, 0)
+
   return (
     <HeaderContainer>
       <NavLink to="/">
@@ -12,17 +25,21 @@ export function Header() {
       </NavLink>
 
       <div>
-        <Location>
-          <MapPin weight="fill" size={22} />
-          <span>Guarulhos, SP</span>
-        </Location>
+        {address && (
+          <Location>
+            <MapPin weight="fill" size={22} />
+            <span>{`${address.city}, ${address.state}`}</span>
+          </Location>
+        )}
 
         <StyledButton to="/orders">
           <ListDashes weight="fill" size={22} />
         </StyledButton>
 
         <StyledButton to="/checkout">
-          {itemsOnCard.length > 0 && <span className="items-on-card">2</span>}
+          {orderState.length > 0 && (
+            <span className="items-on-card">{totalItems}</span>
+          )}
           <ShoppingCart weight="fill" size={22} />
         </StyledButton>
       </div>

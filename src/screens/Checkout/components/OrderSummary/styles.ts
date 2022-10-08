@@ -44,11 +44,7 @@ export const ConfirmButton = styled.button`
   border: 0;
   border-radius: 6px;
   transition: background 0.2s;
-
-  a {
-    text-decoration: none;
-    color: ${(props) => props.theme.colors.white};
-  }
+  color: ${(props) => props.theme.colors.white};
 
   &:hover {
     background-color: ${(props) => props.theme.colors['yellow-dark']};
