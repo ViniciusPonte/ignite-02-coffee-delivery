@@ -9,6 +9,6 @@ export type PaymentMethods =
 export interface IOrder extends AddressFormData {
   id: string
   date: Date
-  orderState: ICoffee[]
+  orderItems: ICoffee[]
   paymentMethod: PaymentMethods
 }

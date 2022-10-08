@@ -21,7 +21,8 @@ export function CoffeeItem({ coffee }: CoffeeItemProps) {
     total &&
     total.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })
 
-  const { handleChangeQuantity, removeItemFromCart } = useContext(OrderContext)
+  const { customQuantity, increaseProduct, decreaseProduct, removeItem } =
+    useContext(OrderContext)
 
   return (
     <CoffeeContainer>
@@ -35,18 +36,12 @@ export function CoffeeItem({ coffee }: CoffeeItemProps) {
             <QuantityHandler
               quantity={coffee.quantity || 0}
               onChange={(e) =>
-                handleChangeQuantity(
-                  'custom',
-                  coffee.id,
-                  e.target.valueAsNumber,
-                )
+                customQuantity(coffee.id, e.target.valueAsNumber)
               }
-              handleAdd={() => handleChangeQuantity('add', coffee.id, 1)}
-              handleSubtract={() =>
-                handleChangeQuantity('remove', coffee.id, 1)
-              }
+              handleAdd={() => increaseProduct(coffee.id)}
+              handleSubtract={() => decreaseProduct(coffee.id)}
             />
-            <ButtonRemove onClick={() => removeItemFromCart(coffee.id)}>
+            <ButtonRemove onClick={() => removeItem(coffee.id)}>
               <Trash size={16} color={defaultTheme.colors.purple} />
               <span>Remover</span>
             </ButtonRemove>

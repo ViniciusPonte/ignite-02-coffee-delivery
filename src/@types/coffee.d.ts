@@ -12,5 +12,5 @@ export interface ICoffee {
   image: string
   category?: CoffeeType[]
   price: number
-  quantity?: number
+  quantity: number
 }

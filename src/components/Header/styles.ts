@@ -37,7 +37,7 @@ export const Location = styled.div`
   }
 `
 
-export const StyledButton = styled(NavLink)`
+export const StyledButton = styled(NavLink)<{ disabled?: boolean }>`
   border: 0;
   outline: 0;
   padding: 0.5rem;
@@ -48,6 +48,12 @@ export const StyledButton = styled(NavLink)`
   border-radius: 6px;
   cursor: pointer;
   position: relative;
+
+  ${(props) =>
+    props.disabled &&
+    `
+    pointer-events: none;
+  `}
 
   svg {
     color: ${(props) => props.theme.colors['yellow-dark']};

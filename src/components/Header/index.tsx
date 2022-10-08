@@ -7,10 +7,10 @@ import { OrderContext } from '../../contexts/OrderContext'
 import { HeaderContainer, Location, StyledButton } from './styles'
 
 export function Header() {
-  const { orderState } = useContext(OrderContext)
+  const { activeOrder } = useContext(OrderContext)
   const { address } = useContext(AddressContext)
 
-  const totalItems = orderState.reduce((sum, i) => {
+  const totalItems = activeOrder.reduce((sum, i) => {
     if (i.quantity) {
       return sum + i.quantity
     } else {
@@ -36,8 +36,8 @@ export function Header() {
           <ListDashes weight="fill" size={22} />
         </StyledButton>
 
-        <StyledButton to="/checkout">
-          {orderState.length > 0 && (
+        <StyledButton to="/checkout" disabled={activeOrder.length === 0}>
+          {activeOrder.length > 0 && (
             <span className="items-on-card">{totalItems}</span>
           )}
           <ShoppingCart weight="fill" size={22} />

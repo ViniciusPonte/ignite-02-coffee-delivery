@@ -1,7 +1,4 @@
 import { useContext } from 'react'
-import { NavLink } from 'react-router-dom'
-import coffee1 from '../../../../assets/coffees/coffee-1.svg'
-import coffee7 from '../../../../assets/coffees/coffee-7.svg'
 import { OrderContext } from '../../../../contexts/OrderContext'
 import { CoffeeItem } from './components/CoffeeItem'
 import {
@@ -12,9 +9,9 @@ import {
 } from './styles'
 
 export function OrderSummary() {
-  const { orderState } = useContext(OrderContext)
+  const { activeOrder } = useContext(OrderContext)
 
-  const totalItems = orderState.reduce((sum, i) => {
+  const totalItems = activeOrder.reduce((sum, i) => {
     if (i.quantity) {
       return sum + i.price * i.quantity
     } else {
@@ -28,7 +25,7 @@ export function OrderSummary() {
 
   return (
     <OrderSummaryContainer>
-      {orderState.map((item) => (
+      {activeOrder.map((item) => (
         <CoffeeItem key={item.id} coffee={item} />
       ))}
       <PriceContainer>

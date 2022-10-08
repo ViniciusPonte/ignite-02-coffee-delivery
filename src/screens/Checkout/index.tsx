@@ -12,7 +12,7 @@ import { AddressFormData, AddressFormSchema } from './validation'
 import { AddressContext } from '../../contexts/AddressContext'
 
 export function Checkout() {
-  const { orderState, paymentMethod, createNewOrder } = useContext(OrderContext)
+  const { activeOrder, createOrder, paymentMethod } = useContext(OrderContext)
   const { onSaveAddress } = useContext(AddressContext)
 
   const addressForm = useForm<AddressFormData>({
@@ -31,10 +31,10 @@ export function Checkout() {
   const { handleSubmit, reset } = addressForm
 
   function handleCreateNewOrder(data: any) {
-    // createNewCycle(data)
-    console.log({ ...data, paymentMethod, orderState })
+    createOrder({ ...data, paymentMethod, orderItems: activeOrder })
     onSaveAddress(data)
-    createNewOrder({ ...data, paymentMethod, orderState })
+
+    localStorage.setItem('@coffee-delivery:activeOrder', JSON.stringify([]))
   }
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export function Checkout() {
           <PaymentMethod />
         </Column>
 
-        {orderState.length > 0 && (
+        {activeOrder.length > 0 && (
           <Column>
             <h2>Revise seu pedido</h2>
 

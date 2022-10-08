@@ -13,7 +13,7 @@ export function OrderItem({ order }: OrderItemProps) {
 
   console.log(order.date)
 
-  const totalItems = order.orderState.reduce((sum, i) => {
+  const totalItems = order.orderItems.reduce((sum, i) => {
     if (i.quantity) {
       return sum + i.price * i.quantity
     } else {
@@ -58,7 +58,7 @@ export function OrderItem({ order }: OrderItemProps) {
 
       {isOpen && (
         <CoffeeList>
-          {order.orderState.map((coffee) => (
+          {order.orderItems.map((coffee) => (
             <CoffeeRow key={coffee.id}>
               <img src={coffee.image} alt={coffee.name} />
               <span className="coffee-name">{coffee.name}</span>

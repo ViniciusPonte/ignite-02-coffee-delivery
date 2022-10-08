@@ -1,8 +1,25 @@
-import { createContext, ReactNode, useState } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useEffect,
+  useReducer,
+  useState,
+} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ICoffee } from '../@types/coffee'
 import { IOrder, PaymentMethods } from '../@types/order'
 import { coffees } from '../constants/coffees'
+import {
+  changePaymentMethod,
+  createNewOrder,
+  customQuantityItem,
+  decreaseItem,
+  getActiveOrder,
+  increaseItem,
+  removeItemFromCart,
+  saveOrders,
+} from '../reducers/orders/actions'
+import { ordersReducer } from '../reducers/orders/reducer'
 import { AddressFormData } from '../screens/Checkout/validation'
 
 interface OrderContextProviderProps {
@@ -10,11 +27,17 @@ interface OrderContextProviderProps {
 }
 
 interface OrderContextType {
-  orderState: ICoffee[]
+  activeOrder: ICoffee[]
   paymentMethod: PaymentMethods | undefined
-  orderList: IOrder[]
-  increaseItem: (id: string) => void
-  decreaseItem: (id: string) => void
+  orders: IOrder[]
+  increaseProduct: (id: string) => void
+  decreaseProduct: (id: string) => void
+  customQuantity: (id: string, quantity: number) => void
+  removeItem: (id: string) => void
+  handleChangePaymentMethod: (method: PaymentMethods) => void
+  createOrder: (data: IOrder) => void
+  onSaveOrders: (data: IOrder[]) => void
+  /*   decreaseItem: (id: string) => void
   handleChangeQuantity: (
     type: 'add' | 'remove' | 'custom',
     id: string,
@@ -23,115 +46,67 @@ interface OrderContextType {
   handleChangePaymentMethod: (method: PaymentMethods) => void
   createNewOrder: (data: IOrder) => void
   onSaveOrders: (data: IOrder[]) => void
-  removeItemFromCart: (id: string) => void
+  removeItemFromCart: (id: string) => void */
 }
 
 export const OrderContext = createContext({} as OrderContextType)
 
 export function OrderContextProvider({ children }: OrderContextProviderProps) {
   const navigate = useNavigate()
-  const [orderList, setOrderList] = useState<IOrder[]>([])
-  const [orderState, setOrderState] = useState<ICoffee[]>([])
-  const [paymentMethod, setPaymentMethod] = useState<
-    PaymentMethods | undefined
-  >(undefined)
 
-  function increaseItem(id: string) {
-    const itemOnCart = orderState.find((item) => item.id === id)
-    const coffee = coffees.find((item) => item.id === id)
-    let newState: ICoffee[] = []
+  const [orderState, dispatch] = useReducer(ordersReducer, {
+    activeOrder: [],
+    orders: [],
+    paymentMethod: undefined,
+  })
 
-    if (itemOnCart) {
-      newState = orderState.map((item) => {
-        if (item.id === id && item.quantity) {
-          return {
-            ...item,
-            quantity: item.quantity + 1,
-          }
-        } else {
-          return item
-        }
-      })
+  const { activeOrder, orders, paymentMethod } = orderState
 
-      setOrderState(newState)
-    } else {
-      if (coffee) {
-        setOrderState((state) => [...state, { ...coffee, quantity: 1 }])
-      }
+  useEffect(() => {
+    if (activeOrder.length > 0) {
+      localStorage.setItem(
+        '@coffee-delivery:activeOrder',
+        JSON.stringify(activeOrder),
+      )
     }
+  }, [activeOrder])
+
+  useEffect(() => {
+    const data = localStorage.getItem('@coffee-delivery:activeOrder')
+
+    if (data) dispatch(getActiveOrder(JSON.parse(data)))
+  }, [])
+
+  function increaseProduct(id: string) {
+    dispatch(increaseItem(id))
   }
 
-  function decreaseItem(id: string) {
-    const itemOnCart = orderState.find((item) => item.id === id)
-    let newState: ICoffee[] = []
-
-    if (itemOnCart) {
-      newState = orderState.map((item) => {
-        if (item.id === id && item.quantity) {
-          if (item.quantity === 0) return item
-          return {
-            ...item,
-            quantity: item.quantity - 1,
-          }
-        } else {
-          return item
-        }
-      })
-
-      if (itemOnCart.quantity === 1) {
-        setOrderState(orderState.filter((item) => item.id !== id))
-      } else {
-        setOrderState(newState)
-      }
-    }
+  function decreaseProduct(id: string) {
+    dispatch(decreaseItem(id))
   }
 
   function customQuantity(id: string, quantity: number) {
-    const itemOnCart = orderState.find((item) => item.id === id)
-    const coffee = coffees.find((item) => item.id === id)
-    let newState: ICoffee[] = []
-
-    if (itemOnCart) {
-      newState = orderState.map((item) => {
-        if (item.id === id && item.quantity) {
-          return {
-            ...item,
-            quantity,
-          }
-        } else {
-          return item
-        }
-      })
-
-      setOrderState(newState)
-    } else {
-      if (coffee) {
-        setOrderState((state) => [...state, { ...coffee, quantity }])
-      }
-    }
+    dispatch(customQuantityItem(id, quantity))
   }
 
-  function handleChangeQuantity(
-    type: 'add' | 'remove' | 'custom',
-    id: string,
-    quantity: number,
-  ) {
-    switch (type) {
-      case 'add':
-        increaseItem(id)
-        break
-      case 'remove':
-        decreaseItem(id)
-        break
-      case 'custom':
-        customQuantity(id, quantity)
-        break
-    }
+  function removeItem(id: string) {
+    dispatch(removeItemFromCart(id))
   }
 
   function handleChangePaymentMethod(method: PaymentMethods) {
-    setPaymentMethod(method)
+    dispatch(changePaymentMethod(method))
   }
+
+  function createOrder(data: IOrder) {
+    dispatch(createNewOrder(data))
+    navigate('/order-completed')
+  }
+
+  function onSaveOrders(data: IOrder[]) {
+    dispatch(saveOrders(data))
+  }
+
+  /* 
 
   function createNewOrder(data: IOrder) {
     const id = String(
@@ -149,31 +124,21 @@ export function OrderContextProvider({ children }: OrderContextProviderProps) {
     setPaymentMethod(undefined)
 
     navigate('order-completed')
-  }
-
-  function onSaveOrders(data: IOrder[]) {
-    setOrderList(data)
-  }
-
-  function removeItemFromCart(id: string) {
-    const updatedCart = orderState.filter((item) => item.id !== id)
-
-    setOrderState(updatedCart)
-  }
+  } */
 
   return (
     <OrderContext.Provider
       value={{
-        increaseItem,
-        decreaseItem,
-        orderState,
-        handleChangeQuantity,
+        activeOrder,
         paymentMethod,
+        orders,
+        increaseProduct,
+        decreaseProduct,
+        customQuantity,
+        removeItem,
         handleChangePaymentMethod,
-        createNewOrder,
+        createOrder,
         onSaveOrders,
-        orderList,
-        removeItemFromCart,
       }}
     >
       {children}

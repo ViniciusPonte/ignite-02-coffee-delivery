@@ -5,11 +5,14 @@ import { OrdersContainer, OrdersList } from './styles'
 import { OrderItem } from './components/OrderItem'
 
 export function Orders() {
-  const { onSaveOrders, orderList } = useContext(OrderContext)
+  const { orders, onSaveOrders } = useContext(OrderContext)
 
   useEffect(() => {
     const storagedOrders = localStorage.getItem('@coffee-delivery:orders')
-    onSaveOrders(JSON.parse(storagedOrders!!))
+
+    if (storagedOrders && storagedOrders.length > 0) {
+      onSaveOrders(JSON.parse(storagedOrders!!))
+    }
   }, [])
 
   return (
@@ -29,7 +32,7 @@ export function Orders() {
           </thead>
 
           <tbody>
-            {orderList.map((order: IOrder) => (
+            {orders.map((order: IOrder) => (
               <OrderItem key={order.id} order={order} />
             ))}
           </tbody>

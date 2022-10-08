@@ -21,9 +21,10 @@ export function CoffeeCard({ coffee }: CoffeeCardProps) {
     minimumFractionDigits: 2,
   })
 
-  const { handleChangeQuantity, orderState } = useContext(OrderContext)
+  const { increaseProduct, decreaseProduct, activeOrder, customQuantity } =
+    useContext(OrderContext)
 
-  const activeCoffee = orderState.find((item) => item.id === coffee.id)
+  const activeCoffee = activeOrder.find((item) => item.id === coffee.id)
 
   return (
     <CoffeeContainer>
@@ -47,18 +48,13 @@ export function CoffeeCard({ coffee }: CoffeeCardProps) {
 
         <div className="quantity">
           <QuantityHandler
-            handleAdd={() => handleChangeQuantity('add', coffee.id, 1)}
-            handleSubtract={() => handleChangeQuantity('remove', coffee.id, 1)}
+            handleAdd={() => increaseProduct(coffee.id)}
+            handleSubtract={() => decreaseProduct(coffee.id)}
             quantity={activeCoffee?.quantity || 0}
-            onChange={(e) =>
-              handleChangeQuantity('custom', coffee.id, e.target.valueAsNumber)
-            }
+            onChange={(e) => customQuantity(coffee.id, e.target.valueAsNumber)}
           />
 
-          <button
-            type="button"
-            onClick={() => handleChangeQuantity('add', coffee.id, 1)}
-          >
+          <button type="button" onClick={() => increaseProduct(coffee.id)}>
             <ShoppingCart size={22} weight="fill" />
           </button>
         </div>
